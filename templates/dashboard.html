@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Monitor Dashboard</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e1e;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .metric-box {
+            background: #2b2b2b;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .label {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            height: 20px;
+            background: #444;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #4caf50;
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .value {
+            float: right;
+            font-weight: bold;
+        }
+
+        /* Chart container */
+        #chart-container {
+            background: #2b2b2b;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Server Monitor Dashboard</h1>
+
+    <div class="metric-box">
+        <div class="label">CPU Usage <span id="cpu-val" class="value"></span></div>
+        <div class="bar"><div id="cpu-bar" class="bar-fill"></div></div>
+    </div>
+
+    <div class="metric-box">
+        <div class="label">Memory Usage <span id="memory-val" class="value"></span></div>
+        <div class="bar"><div id="memory-bar" class="bar-fill"></div></div>
+    </div>
+
+    <div class="metric-box">
+        <div class="label">Disk Usage <span id="disk-val" class="value"></span></div>
+        <div class="bar"><div id="disk-bar" class="bar-fill"></div></div>
+    </div>
+
+    <div class="metric-box">
+        <div class="label">Uptime <span id="uptime-val" class="value"></span></div>
+    </div>
+
+    <!-- CPU History Chart -->
+    <div id="chart-container">
+        <h2 style="text-align:center; margin-bottom:15px;">CPU Usage History</h2>
+        <canvas id="cpuChart" height="120"></canvas>
+    </div>
+
+    <script>
+        function formatUptime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${h}h ${m}m ${s}s`;
+        }
+
+        function updateMetrics() {
+            fetch("/metrics")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("cpu-val").textContent = data.cpu + "%";
+                    document.getElementById("cpu-bar").style.width = data.cpu + "%";
+
+                    document.getElementById("memory-val").textContent = data.memory + "%";
+                    document.getElementById("memory-bar").style.width = data.memory + "%";
+
+                    document.getElementById("disk-val").textContent = data.disk + "%";
+                    document.getElementById("disk-bar").style.width = data.disk + "%";
+
+                    document.getElementById("uptime-val").textContent = formatUptime(data.uptime_seconds);
+                });
+        }
+
+        setInterval(updateMetrics, 2000);
+        updateMetrics();
+
+        // -----------------------------
+        // CPU HISTORY CHART
+        // -----------------------------
+        const ctx = document.getElementById('cpuChart').getContext('2d');
+        const cpuChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'CPU (%)',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.2,
+                    borderWidth: 2,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, max: 100 }
+                },
+                plugins: {
+                    legend: { labels: { color: '#e0e0e0' } }
+                }
+            }
+        });
+
+        function updateChart() {
+            fetch("/cpu-history")
+                .then(res => res.json())
+                .then(data => {
+                    cpuChart.data.labels = data.map(p => p.time);
+                    cpuChart.data.datasets[0].data = data.map(p => p.usage);
+                    cpuChart.update();
+                });
+        }
+
+        setInterval(updateChart, 3000);
+        updateChart();
+    </script>
+
+</body>
+</html>
