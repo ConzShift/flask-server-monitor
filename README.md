@@ -20,8 +20,7 @@ This project demonstrates backend development, API design, frontend integration,
 ---
 
 ## 🖥️ Dashboard Preview
-
-
+![Dashboard Screenshot](screenshot.png)
 
 ---
 
