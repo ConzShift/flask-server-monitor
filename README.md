@@ -23,8 +23,8 @@ This project demonstrates backend development, API design, frontend integration,
 ![Dashboard Screenshot](screenshot.png)
 
 ![Server Monitor Dashboard](server-monitor-dashboard.gif)
----
 
+---
 ## 🧩 Tech Stack
 
 - **Backend:** Flask  
