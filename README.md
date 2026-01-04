@@ -70,7 +70,7 @@ docker run -p 5000:5000 server-monitor
 http://localhost:5000
 ```
 
-# 🔧 Run as a systemd Service (Optional
+# 🔧 Run as a systemd Service (Optional)
 ### Create a service file:
 ```bash
 sudo nano /etc/systemd/system/server-monitor.service
