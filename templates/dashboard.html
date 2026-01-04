@@ -11,31 +11,38 @@
             font-family: Arial, sans-serif;
             background: #1e1e1e;
             color: #e0e0e0;
-            padding: 20px;
+            padding: 10px;
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        /* Compact grid layout */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         .metric-box {
             background: #2b2b2b;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 12px;
             border-radius: 8px;
         }
 
         .label {
-            font-size: 18px;
-            margin-bottom: 8px;
+            font-size: 14px;
+            margin-bottom: 5px;
         }
 
         .bar {
             width: 100%;
-            height: 20px;
+            height: 14px;
             background: #444;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
         }
 
@@ -49,14 +56,24 @@
         .value {
             float: right;
             font-weight: bold;
+            font-size: 14px;
         }
 
         /* Chart container */
         #chart-container {
             background: #2b2b2b;
-            padding: 20px;
+            padding: 12px;
             border-radius: 8px;
-            margin-top: 30px;
+            margin-top: 10px;
+        }
+
+        #chart-container h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        canvas {
+            max-height: 180px !important;
         }
     </style>
 </head>
@@ -64,29 +81,34 @@
 
     <h1>Server Monitor Dashboard</h1>
 
-    <div class="metric-box">
-        <div class="label">CPU Usage <span id="cpu-val" class="value"></span></div>
-        <div class="bar"><div id="cpu-bar" class="bar-fill"></div></div>
-    </div>
+    <!-- Two-column compact layout -->
+    <div class="grid">
 
-    <div class="metric-box">
-        <div class="label">Memory Usage <span id="memory-val" class="value"></span></div>
-        <div class="bar"><div id="memory-bar" class="bar-fill"></div></div>
-    </div>
+        <div class="metric-box">
+            <div class="label">CPU Usage <span id="cpu-val" class="value"></span></div>
+            <div class="bar"><div id="cpu-bar" class="bar-fill"></div></div>
+        </div>
 
-    <div class="metric-box">
-        <div class="label">Disk Usage <span id="disk-val" class="value"></span></div>
-        <div class="bar"><div id="disk-bar" class="bar-fill"></div></div>
-    </div>
+        <div class="metric-box">
+            <div class="label">Memory Usage <span id="memory-val" class="value"></span></div>
+            <div class="bar"><div id="memory-bar" class="bar-fill"></div></div>
+        </div>
 
-    <div class="metric-box">
-        <div class="label">Uptime <span id="uptime-val" class="value"></span></div>
+        <div class="metric-box">
+            <div class="label">Disk Usage <span id="disk-val" class="value"></span></div>
+            <div class="bar"><div id="disk-bar" class="bar-fill"></div></div>
+        </div>
+
+        <div class="metric-box">
+            <div class="label">Uptime <span id="uptime-val" class="value"></span></div>
+        </div>
+
     </div>
 
     <!-- CPU History Chart -->
     <div id="chart-container">
-        <h2 style="text-align:center; margin-bottom:15px;">CPU Usage History</h2>
-        <canvas id="cpuChart" height="120"></canvas>
+        <h2 style="text-align:center;">CPU Usage History</h2>
+        <canvas id="cpuChart"></canvas>
     </div>
 
     <script>
@@ -117,9 +139,7 @@
         setInterval(updateMetrics, 2000);
         updateMetrics();
 
-        // -----------------------------
         // CPU HISTORY CHART
-        // -----------------------------
         const ctx = document.getElementById('cpuChart').getContext('2d');
         const cpuChart = new Chart(ctx, {
             type: 'line',
@@ -140,7 +160,7 @@
                     y: { beginAtZero: true, max: 100 }
                 },
                 plugins: {
-                    legend: { labels: { color: '#e0e0e0' } }
+                    legend: { labels: { color: '#e0e0e0', font: { size: 10 } } }
                 }
             }
         });
